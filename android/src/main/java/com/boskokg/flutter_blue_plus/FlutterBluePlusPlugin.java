@@ -16,6 +16,7 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothStatusCodes;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -619,14 +620,22 @@ public class FlutterBluePlusPlugin implements FlutterPlugin, MethodCallHandler, 
           return;
         }
 
-        // Set descriptor to new value
-        if(!descriptor.setValue(request.getValue().toByteArray())){
-          result.error("write_descriptor_error", "could not set the local value for descriptor", null);
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          if(gattServer.writeDescriptor(descriptor, request.getValue().toByteArray()) != BluetoothStatusCodes.SUCCESS){
+            result.error("write_descriptor_error", "writeDescriptor failed", null);
+            return;
+          }
+        } else {
+          // Set descriptor to new value
+          if(!descriptor.setValue(request.getValue().toByteArray())){
+            result.error("write_descriptor_error", "could not set the local value for descriptor", null);
+              return;
+          }
 
-        if(!gattServer.writeDescriptor(descriptor)){
-          result.error("write_descriptor_error", "writeCharacteristic failed", null);
-          return;
+          if(!gattServer.writeDescriptor(descriptor)){
+            result.error("write_descriptor_error", "writeCharacteristic failed", null);
+            return;
+          }
         }
 
         result.success(null);
