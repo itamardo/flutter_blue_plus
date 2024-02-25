@@ -1061,8 +1061,12 @@ public class FlutterBluePlusPlugin implements FlutterPlugin, MethodCallHandler, 
               }
               macDeviceScanned.add(result.getDevice().getAddress());
             }
-            Protos.ScanResult scanResult = ProtoMaker.from(result.getDevice(), result);
-            invokeMethodUIThread("ScanResult", scanResult.toByteArray());
+            try {
+              Protos.ScanResult scanResult = ProtoMaker.from(result.getDevice(), result);
+              invokeMethodUIThread("ScanResult", scanResult.toByteArray());
+            } catch (Exception e){
+              Log.d("onScanResult", e.toString());
+            }
           }
         }
 
