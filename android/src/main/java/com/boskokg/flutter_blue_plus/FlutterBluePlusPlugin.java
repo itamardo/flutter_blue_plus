@@ -1066,6 +1066,7 @@ public class FlutterBluePlusPlugin implements FlutterPlugin, MethodCallHandler, 
               invokeMethodUIThread("ScanResult", scanResult.toByteArray());
             } catch (Exception e){
               Log.d("onScanResult", e.toString());
+              // possible fix for android 14 sdk 34
             }
           }
         }
